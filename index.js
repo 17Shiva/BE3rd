@@ -1,37 +1,37 @@
+// Static Files
+
 const express = require('express')
+
 const app = express();
 
-app.get('/',(req,res) => {
-    // res.send("Hello world")
-    res.send("<h1>Hello</h1>")
-    // res.send(__dirname+'/index.html')
+app.use(express.urlencoded({ extended: true })); // to parse form data...
 
-    // res.json({
-    //     name:"Nitesh",
-    //     age: 21
-    // })
-    // res.end("hi")
+app.use(express.static(__dirname+"/public"));
 
+app.get('/',(req,res)=>{
+    res.sendFile(__dirname+"/public/index.html")
+})
+
+
+app.get('/about',(req,res)=>{
+    res.sendFile(__dirname+"/about.html")
+})
+
+app.post('/adduser',(req,res)=>{
+    const name = req.body.name;
+    const pass = req.body.password;
+
+    res.json({
+        name,
+        pa
+    })
+    console.log("User:", name, pass);
+    res.send(`Welcome, ${name}!`);
+
+    // res.json  // important
 
 })
 
-// Path variable 
- // Query Parameters
-app.get('/watch' , (req,res)=>{
-    let videoId = req.query.v;
-    let nid = req.query.n;
-    res.send("id got it",videoId,nid);
-} )
-
-
- // Params
-
- app.get('watch/:v',(req,res)=>{
-    console.log(req.params.v) 
-    console.log(req.params.n)
-    res.send("got it !!!!!");
- })
-
 app.listen(3001,()=>{
-    console.log("server running at http://localhost:3001 ");
-}); // starts the server on port 3001
+    console.log("server started at http://localhost:3001");
+})
