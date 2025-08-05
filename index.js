@@ -1,37 +1,34 @@
-// Static Files
+//fetch mai 2 baar .then lagta hai
 
-const express = require('express')
-
-const app = express();
-
-app.use(express.urlencoded({ extended: true })); // to parse form data...
-
-app.use(express.static(__dirname+"/public"));
-
-app.get('/',(req,res)=>{
-    res.sendFile(__dirname+"/public/index.html")
-})
-
-
-app.get('/about',(req,res)=>{
-    res.sendFile(__dirname+"/about.html")
-})
-
-app.post('/adduser',(req,res)=>{
-    const name = req.body.name;
-    const pass = req.body.password;
-
-    res.json({
-        name,
-        pa
+function getUserData(URL) {
+   fetch(URL)
+    .then((res) => {
+        console.log(res);
+        return res.json()
     })
-    console.log("User:", name, pass);
-    res.send(`Welcome, ${name}!`);
+    .then((data) => {
+        console.log(data);
+        data.forEach(user => {
+            displayUser(user);
+        });
+    })
+    .catch((err) => {
+        console.error(err);
+    })
+}
 
-    // res.json  // important
-
-})
-
-app.listen(3001,()=>{
-    console.log("server started at http://localhost:3001");
-})
+let userConatiner = document.querySelector('.user-container');
+function displayUser(user){
+  let li = document.createElement('li');
+  li.setAttribute('class', 'user-item');
+  li.innerHTML = `<div class="user-info">
+                <h1>${user.name}</h1>
+                <p>${user.username}</p>
+            </div>
+            <div class="user-btn">
+                <button class="user-delete">Delete</button>
+                <button class="user-edit">Edit</button>
+            </div>`
+            userConatiner.appendChild(li);
+}
+getUserData('https://jsonplaceholder.typicode.com/users');
