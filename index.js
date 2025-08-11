@@ -1,34 +1,52 @@
-//fetch mai 2 baar .then lagta hai
+const express = require('express')
+const mongoose = require('mongoose');
+const Blogs = require('./model/user');
+const app = express();
 
-function getUserData(URL) {
-   fetch(URL)
-    .then((res) => {
-        console.log(res);
-        return res.json()
-    })
-    .then((data) => {
-        console.log(data);
-        data.forEach(user => {
-            displayUser(user);
-        });
-    })
-    .catch((err) => {
-        console.error(err);
-    })
-}
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
-let userConatiner = document.querySelector('.user-container');
-function displayUser(user){
-  let li = document.createElement('li');
-  li.setAttribute('class', 'user-item');
-  li.innerHTML = `<div class="user-info">
-                <h1>${user.name}</h1>
-                <p>${user.username}</p>
-            </div>
-            <div class="user-btn">
-                <button class="user-delete">Delete</button>
-                <button class="user-edit">Edit</button>
-            </div>`
-            userConatiner.appendChild(li);
-}
-getUserData('https://jsonplaceholder.typicode.com/users');
+app.post("/blogs", async (req, res) => {
+    let { title, body } = req.body;
+    let newBlog = new Blogs({
+        title: title,
+        body: body,
+        date: Date.now()
+    });
+    await newBlog.save();
+    res.json({
+        success: true,
+        data: newBlog,
+        message: "blog added successfully"
+    });
+});
+
+
+
+app.get("/blogs",async (req,res)=>{
+    let allblog = await Blogs.find();
+    res.json({
+        success: true,
+        data: allblog
+    })
+})
+
+app.get("/blogs/:id", async (req,res)=>{
+    let {id} = req.params
+    let blog=  await Blogs.findOne({_id:id});
+    res.json({
+        success:true,
+        data:blog
+    })
+})
+
+app.get("/", (req, res) => {
+    res.send("Hello world");
+});
+
+app.listen(3101, () => {
+    console.log("server started at http://localhost:3101");
+});
+
+mongoose.connect('mongodb://127.0.0.1:27017/G26')
+    .then(() => console.log('Connected!'));
